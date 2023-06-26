@@ -15,7 +15,7 @@ contract Authorization {
         isServiceProvider[_serviceProviderAddress]=true;
     }
 
-    function authenticate(address _user) external returns(string memory){
+    function authenticate(address _user) external view returns(string memory){
         if(isUser[_user]){
             return "User";
         }

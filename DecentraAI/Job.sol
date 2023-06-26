@@ -91,8 +91,10 @@ contract Jobs {
         return jobs;
     }
 
-     function getJob(uint _jobId) public view returns(Job memory){
+    function getJob(uint _jobId) public view returns(Job memory){
         return jobs[_jobId];
     }
+
+
 
 }

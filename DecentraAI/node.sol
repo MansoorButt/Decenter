@@ -18,7 +18,7 @@ contract Node {
         string GPU_PERCENT;
         string MEM_SHARED;
         string storageShared;
-        uint[] modelIndices;  // Store the indices of Model structs
+        uint[] modelIndices; // Store the indices of Model structs
     }
 
     struct Model {
@@ -29,26 +29,26 @@ contract Node {
     }
 
     Decentride[] public decentride;
-    Model[] public models;  // Store all Model structs
+    Model[] public models; // Store all Model structs
     Jobs job;
     uint nodeCount;
     uint modelCount;
 
     mapping(address => uint256[]) public traverseDecentride;
-    mapping(uint => uint256[]) public traverseModel;
+    // mapping(uint => uint256[]) public traverseModel;
     mapping(uint => Jobs.Job) public assignedJob;
-    
+    mapping(uint => uint) public state;
+
     constructor(Jobs _job) {
         job = _job;
     }
-    
-    function setAssignedJob(uint jobId) public {
-        assignedJob[jobId] = job.getJob(jobId);
+
+    function setAssignedJob(uint _nodeId, uint _jobId) public {
+        assignedJob[_nodeId] = job.getJob(_jobId);
     }
 
     function registerDecentride(
         address _owner,
-        uint _jobId,
         uint _startTime,
         uint _availableBalance,
         string memory _ipAddress,
@@ -60,7 +60,6 @@ contract Node {
     ) public {
         Decentride memory newDecentride;
         newDecentride.owner = _owner;
-        newDecentride.jobId = _jobId;
         newDecentride.startTime = _startTime;
         newDecentride.nodeID = nodeCount;
         newDecentride.availableBalance = _availableBalance;
@@ -71,23 +70,61 @@ contract Node {
         newDecentride.MEM_SHARED = _MEM_SHARED;
         newDecentride.storageShared = _storageShared;
         decentride.push(newDecentride);
+        openMachine(nodeCount);
+        traverseDecentride[_owner].push(nodeCount);
         nodeCount++;
-    } 
-    
-    function addModel(uint decentrideIndex, string memory _algo, string memory _modelHash, string memory _accuracy) public {
-        require(decentrideIndex < decentride.length, "Invalid Decentride index");
+    }
+
+    // This function adds a new model to the Decentride platform
+    // It takes in four parameters: the index of the Decentride, the algorithm used, the hash of the model, and the accuracy of the model
+    function addModel(
+        uint decentrideIndex,
+        string memory _algo,
+        string memory _modelHash,
+        string memory _accuracy
+    ) public {
+        // Check if the Decentride index is valid
+        require(
+            decentrideIndex < decentride.length,
+            "Invalid Decentride index"
+        );
+
+        // Create a new Model struct
         Model memory newModel;
+        // Set the model ID to the current model count
         newModel.modelId = modelCount;
+        // Set the algorithm used for the model
         newModel.algo = _algo;
+        // Set the hash of the model
         newModel.modelHash = _modelHash;
-        newModel.accuracy = _accuracy;        
-        models.push(newModel);        
+        // Set the accuracy of the model
+        newModel.accuracy = _accuracy;
+        // Add the new model to the models array
+        models.push(newModel);
+        // Add the index of the new model to the Decentride's modelIndices array
         decentride[decentrideIndex].modelIndices.push(modelCount);
+        // Increment the model count
         modelCount++;
     }
 
+    // This function sends a job to a specific node
+    function sendJob(uint _nodeId, uint _jobId) public {
+        // Create a new Decentride object and assign it to the specified node
+        Decentride memory newDecentride = decentride[_nodeId];
+        // Set the job ID for the new Decentride object
+        newDecentride.jobId = _jobId;
+        // Call the setAssignedJob function to update the assigned job for the specified node
+        setAssignedJob(_nodeId, _jobId);
+    }
+
+    function openMachine(uint _nodeId) public {
+        state[_nodeId] = 1;
+    }
+
+    function closeMachine(uint _nodeId) public {
+        state[_nodeId] = 0;
+    }
 
     
-
-
+    
 }
