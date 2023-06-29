@@ -3,10 +3,10 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-contract cfoToken is ERC20 {
+contract Tokenx is ERC20 {
     address payable public owner;
 
-    constructor() ERC20("abc", "ABC") {
+    constructor() ERC20("Sudo", "sdo") {
         owner = payable(msg.sender);
         mint(owner,700000 * (10 ** decimals()));
         

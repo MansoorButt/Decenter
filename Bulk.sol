@@ -394,19 +394,17 @@ contract Bulk {
         return totalamount; // Return the total amount of the token available for the caller
     }
 
-    // This function allows a user to withdraw all available tokens of a given type
     function withdrawAll(address _token) external {
-        // Get the available amount of the token and its address
         (uint amount, address _tokenx) = getAvailableAmount(_token);
-        // Ensure that there is an amount available to withdraw
+
         require(amount > 0, "Zero Amount available At the Moment");
-        // Subtract the withdrawn amount from the user's balance
+
         balances[msg.sender][_tokenx] -= amount;
-        // Add the withdrawn amount to the user's withdrawal history
+
         withdrawals[msg.sender][_tokenx] += amount;
-        // Create an instance of the token contract
+
         IERC20 tokenx = IERC20(_tokenx);
-        // Transfer the withdrawn amount to the user's address
+
         tokenx.transfer(msg.sender, amount * (10 ** 18));
     }
 

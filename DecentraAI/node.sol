@@ -38,6 +38,7 @@ contract Node {
     // mapping(uint => uint256[]) public traverseModel;
     mapping(uint => Jobs.Job) public assignedJob;
     mapping(uint => uint) public state;
+    mapping(address => Decentride[]) public trackVM;
 
     constructor(Jobs _job) {
         job = _job;
@@ -72,6 +73,7 @@ contract Node {
         decentride.push(newDecentride);
         openMachine(nodeCount);
         traverseDecentride[_owner].push(nodeCount);
+        trackVM[_owner][nodeCount]=newDecentride;
         nodeCount++;
     }
 
@@ -81,7 +83,8 @@ contract Node {
         uint decentrideIndex,
         string memory _algo,
         string memory _modelHash,
-        string memory _accuracy
+        string memory _accuracy,
+        address _owner
     ) public {
         // Check if the Decentride index is valid
         require(
@@ -103,15 +106,17 @@ contract Node {
         models.push(newModel);
         // Add the index of the new model to the Decentride's modelIndices array
         decentride[decentrideIndex].modelIndices.push(modelCount);
+        trackVM[_owner][decentrideIndex].modelIndices[modelCount]=modelCount;
         // Increment the model count
         modelCount++;
     }
 
     // This function sends a job to a specific node
-    function sendJob(uint _nodeId, uint _jobId) public {
+    function sendJob(uint _nodeId, uint _jobId,address _owner) public {
         // Create a new Decentride object and assign it to the specified node
         Decentride memory newDecentride = decentride[_nodeId];
         // Set the job ID for the new Decentride object
+        trackVM[_owner][_nodeId].jobId=_jobId;
         newDecentride.jobId = _jobId;
         // Call the setAssignedJob function to update the assigned job for the specified node
         setAssignedJob(_nodeId, _jobId);
@@ -125,6 +130,10 @@ contract Node {
         state[_nodeId] = 0;
     }
 
+    function getNode(address _owner) public view returns(Decentride[] memory){
+        return trackVM[_owner];
+    }
+         
     
     
 }

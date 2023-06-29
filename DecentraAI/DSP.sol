@@ -25,7 +25,7 @@ contract DSP {
 
      mapping(address => ServiceProvider) public provider;
      mapping(address => uint) public jobsAccepted;
-     mapping()
+    
 
     function registerDSP(address _walletAddress,string memory _name , uint _depositedCoin) external {
         require(!authorization.isServiceProvider(_walletAddress),"This Service Provider already exists");
@@ -63,13 +63,18 @@ contract DSP {
         string memory _modelHash,
         string memory _accuracy) public{
             
-            nodes.addModel(decentrideIndex,_algo,_modelHash,_accuracy);
+            nodes.addModel(decentrideIndex,_algo,_modelHash,_accuracy,msg.sender);
         }
 
         function _assignDecentride(uint _jobId,uint _nodeId) public {
-            nodes.sendJob(_jobId,_nodeId);
+            nodes.sendJob(_jobId,_nodeId,msg.sender);
         }
 
+        function getDecentrides(address _owner) public view returns(Node.Decentride[] memory) {
+            return nodes.getNode(_owner);
+        }
+
+         
                 
     
 
