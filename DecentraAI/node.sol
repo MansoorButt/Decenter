@@ -50,7 +50,6 @@ contract Node {
 
     function registerDecentride(
         address _owner,
-        uint _startTime,
         uint _availableBalance,
         string memory _ipAddress,
         string memory _CPU_CORE,
@@ -61,7 +60,7 @@ contract Node {
     ) public {
         Decentride memory newDecentride;
         newDecentride.owner = _owner;
-        newDecentride.startTime = _startTime;
+        newDecentride.startTime = block.timestamp;
         newDecentride.nodeID = nodeCount;
         newDecentride.availableBalance = _availableBalance;
         newDecentride.ipAddress = _ipAddress;
@@ -73,10 +72,10 @@ contract Node {
         decentride.push(newDecentride);
         openMachine(nodeCount);
         traverseDecentride[_owner].push(nodeCount);
-        trackVM[_owner][nodeCount]=newDecentride;
+        trackVM[_owner].push(newDecentride);
         nodeCount++;
     }
-
+    // "0x5859464Befb9d3275B7e35De616f8fEAf79336B7",1688557901,50,192.168.10.0,20,30,40,50,60
     // This function adds a new model to the Decentride platform
     // It takes in four parameters: the index of the Decentride, the algorithm used, the hash of the model, and the accuracy of the model
     function addModel(

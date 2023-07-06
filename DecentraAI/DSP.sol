@@ -1,6 +1,6 @@
 //SPDX-License-Identifier:MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.13;
 
 import "./Authorization.sol";
 import "./Job.sol";
@@ -45,17 +45,16 @@ contract DSP {
 
     function _registerDecentride(
         address _owner,
-        uint _startTime,
         uint _availableBalance,
         string memory _ipAddress,
         string memory _CPU_CORE,
         string memory _CPU_PERCENT,
         string memory _GPU_PERCENT,
         string memory _MEM_SHARED,
-        string memory _storageShared) public {
+        string memory _storageShared) public returns (bool) {
 
-                nodes.registerDecentride(_owner,_startTime,_availableBalance,_ipAddress,_CPU_CORE,_CPU_PERCENT,_GPU_PERCENT,_MEM_SHARED,_storageShared);           
-
+                nodes.registerDecentride(_owner,_availableBalance,_ipAddress,_CPU_CORE,_CPU_PERCENT,_GPU_PERCENT,_MEM_SHARED,_storageShared);           
+                return true; 
         } 
 
         function _addModel(uint decentrideIndex,
